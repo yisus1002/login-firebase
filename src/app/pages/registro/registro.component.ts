@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UsuarioModel } from 'src/app/models/usuario.model';
+import { AuthService } from 'src/app/services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-registro',
@@ -11,7 +14,10 @@ export class RegistroComponent implements OnInit {
 
   usuario:UsuarioModel;
   angForm:FormGroup;
-  constructor(private fb:FormBuilder) { }
+  recuerdame:boolean=false;
+  constructor(private fb:FormBuilder,
+              private auth: AuthService,
+              private router: Router) { }
 
   ngOnInit() { 
     this.usuario= new UsuarioModel();
@@ -21,8 +27,34 @@ export class RegistroComponent implements OnInit {
   }
   Onsubmit(form:NgForm){
    if(form.invalid){return}
-    console.log(this.usuario)
-    console.log(form)
+    // console.log(this.usuario)
+    // console.log(form)
+    Swal.fire({
+      text: "Espere por favor ...",
+      icon: "info",
+      allowOutsideClick: false
+    });
+    Swal.showLoading()
+    this.auth.nuevoUsuario(this.usuario)
+    .subscribe({
+      next: (data:any)=>{
+        Swal.close();
+        
+        if(this.recuerdame){
+          localStorage.setItem('email', this.usuario.email);
+        }
+        this.router.navigateByUrl('/home')
+        console.log(data)
+      },
+      error: (error:any)=>{
+        console.log(error.error.error.message)
+        Swal.fire({
+          title:'Error al registrarse',
+          text:error.error.error.message ,
+          icon: "warning",
+        });
+      }
+    })
   }
   // createForm() {
   //   this.angForm = this.fb.group({

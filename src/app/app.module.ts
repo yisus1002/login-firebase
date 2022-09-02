@@ -26,6 +26,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    // JwtModule.forRoot({
+    //   config: {
+    //     // ...
+    //     tokenGetter: () => {
+    //       return localStorage.getItem("token");
+    //     },
+    //   },
+    // }),
   ],
   providers: [],
   bootstrap: [AppComponent]
